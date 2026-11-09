@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 keywords = ["AND", "OR", "NOT", "XOR"]
 
 print("=== Logic Gate Truth Table Simulator ===")
