@@ -1,4 +1,15 @@
 
+
+
+
+
+
+
+
+
+
+
+
 keywords = ["AND", "OR", "NOT", "XOR"]
 
 print("=== Logic Gate Truth Table Simulator ===")
@@ -15,6 +26,7 @@ while True:
 
     if expression.lower() == "quit":
         break
+
 
     if expression.lower() == "gates":
         print("A B | AND OR XOR NAND NOR XNOR")
@@ -50,6 +62,7 @@ while True:
         print("NOT: 0 -> 1   1 -> 0")
         continue
 
+
     safe = True
     for ch in expression:
         if ch.isalnum() or ch == " " or ch == "(" or ch == ")" or ch == "_":
@@ -59,7 +72,9 @@ while True:
         print("Only letters, numbers, spaces and brackets are allowed.")
         continue
 
+
     words = expression.replace("(", " ( ").replace(")", " ) ").split()
+
 
     variables = []
     for word in words:
@@ -79,33 +94,43 @@ while True:
         print("Too many variables (maximum is 8).")
         continue
 
+
+    bad_name = False
+    for name in variables:
+        if name[0].isdigit() or name in ["True", "False", "None"]:
+            bad_name = True
+    if bad_name:
+        print("Variable names must start with a letter (and cannot be True, False or None).")
+        continue
+
+
+
+
+
+
     new_words = []
     for word in words:
         upper = word.upper()
         if upper == "AND":
-            new_words.append("and")
+            new_words.append("&")
         elif upper == "OR":
-            new_words.append("or")
+            new_words.append("|")
         elif upper == "NOT":
-            new_words.append("not")
+            new_words.append("~")
         elif upper == "XOR":
-            new_words.append("!=")
+            new_words.append("^")
         else:
             new_words.append(word)
     python_expression = " ".join(new_words)
 
-    header = ""
-    for name in variables:
-        header = header + name + " "
-    header = header + "| OUTPUT"
-    print(header)
-    print("-" * len(header))
 
     valid = True
+    rows = []
     total_rows = 2 ** count
     for row in range(total_rows):
         values = {}
         line = ""
+
 
         for position in range(count):
             power = count - 1 - position
@@ -116,14 +141,24 @@ while True:
         try:
             result = eval(python_expression, {}, values)
         except Exception:
-            print("The expression is not valid. Check brackets and words.")
             valid = False
             break
 
-        output = 0
-        if result:
-            output = 1
-        print(line + "| " + str(output))
+        output = result & 1
+        rows.append(line + "| " + str(output))
+
+    if not valid:
+        print("The expression is not valid. Check brackets and words.")
+        continue
+
+
+    header = ""
+    for name in variables:
+        header = header + name + " "
+    header = header + "| OUTPUT"
+    print(header)
+    print("-" * len(header))
+    for line in rows:
+        print(line)
 
 print("Goodbye!")
-
